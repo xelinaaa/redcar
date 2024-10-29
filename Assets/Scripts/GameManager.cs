@@ -7,8 +7,6 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public int winScore = 10; // Skor yang diperlukan untuk menang
-    public Text winText; // UI Text untuk menampilkan pesan kemenangan
-    public GameObject buttonRestart; // Referensi ke objek player
 
     private void Awake()
     {
@@ -20,16 +18,12 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
-        }
-
-        winText.gameObject.SetActive(false); // Sembunyikan pesan kemenangan di awal
-        buttonRestart.SetActive(false); 
+        } 
     }
 
     private void Update()
     {
-        // Cek apakah skor pemain mencapai winScore
-        if (ScoreManager.instance.score >= winScore)
+        if (ScoreManager.instance != null && ScoreManager.instance.score >= winScore)
         {
             WinGame();
         }
@@ -37,10 +31,15 @@ public class GameManager : MonoBehaviour
 
     public void WinGame()
     {
-        winText.gameObject.SetActive(true); // Tampilkan pesan kemenangan
-        buttonRestart.SetActive(true); // Tampilkan pesan kemenangan
-        winText.text = "You Win!";
-        Time.timeScale = 0; // Hentikan permainan (jika diperlukan)
-        // Tambahkan logika lain yang ingin Anda lakukan saat menang, seperti memuat scene baru
+        UIManager.instance.ShowWinUI();
+        Time.timeScale = 0;
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+        ScoreManager.instance.score = 0;
+        Time.timeScale = 1;
+        UIManager.instance.HideWinUI();
     }
 }
